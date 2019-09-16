@@ -33,6 +33,7 @@ public class NoteActivityFragment extends Fragment {
     private Switch reminder_switch;
 
     private Button addReminder;
+    //private Button undoBTN;
 
     private CircleView red;
     private CircleView orange;
@@ -54,6 +55,7 @@ public class NoteActivityFragment extends Fragment {
 
         note_layout = root.findViewById(R.id.note_layout);
         reminder_layout = root.findViewById(R.id.reminder_layout);
+        reminder_layout.setVisibility(View.GONE);
 
         //reminder
         addReminder = root.findViewById(R.id.addReminder_button);
@@ -64,12 +66,14 @@ public class NoteActivityFragment extends Fragment {
             }
         });
 
+
+
         reminder_switch = root.findViewById(R.id.reminder_switch);
         reminder_switch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
 
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b)
+                if (!b)
                     reminder_layout.setVisibility(View.GONE);
                 else
                     reminder_layout.setVisibility(View.VISIBLE);
@@ -162,5 +166,9 @@ public class NoteActivityFragment extends Fragment {
 
     private void changeBackground(int color, ConstraintLayout layout) {
         layout.setBackgroundColor(color);
+    }
+
+    private void undo() {
+
     }
 }
