@@ -10,7 +10,7 @@
     tools:showIn="@layout/activity_note">
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/title_editText"
         android:layout_width="390dp"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/body_editText"
         android:layout_width="387dp"
         android:layout_height="394dp"
         android:layout_marginTop="8dp"

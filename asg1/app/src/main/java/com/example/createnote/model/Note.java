@@ -1,4 +1,4 @@
-package ca.qc.johnabbott.cs616.notes.model;
+package com.example.createnote.model;
 
 import java.util.Date;
 

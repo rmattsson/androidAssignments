@@ -1,4 +1,4 @@
-package ca.qc.johnabbott.cs616.notes.model;
+package com.example.createnote.model;
 
 /**
  * Enumeration of note categories, represented as colors.
@@ -6,7 +6,7 @@ package ca.qc.johnabbott.cs616.notes.model;
  */
 public enum Category {
 
-    RED(1), ORANGE(2), YELLOW(3), GREEN(4), LIGHT_BLUE(5), DARK_BLUE(6), PURPLE(7), BROWN(8);
+    RED(1), ORANGE(2), YELLOW(3), GREEN(4), TEAL(5), BLUE(6), INDIGO(7), PURPLE(8);
 
     private int colorId;
 
