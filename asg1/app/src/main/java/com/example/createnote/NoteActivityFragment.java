@@ -111,7 +111,6 @@ public class NoteActivityFragment extends Fragment {
                     }
                 });
 
-
         body = root.findViewById(R.id.body_editText);
         body.addTextChangedListener(new TextWatcher() {
 
@@ -134,6 +133,7 @@ public class NoteActivityFragment extends Fragment {
             }
         });
 
+
         //reminder
         addReminder = root.findViewById(R.id.addReminder_button);
         addReminder.setOnClickListener(new View.OnClickListener() {
@@ -152,8 +152,10 @@ public class NoteActivityFragment extends Fragment {
             }
         });
 
+        //saving the beginning of the program so you can udo the first change
         addNote(history);
 
+        //toggle menu witch
         reminder_switch = root.findViewById(R.id.reminder_switch);
         reminder_switch.setOnCheckedChangeListener(new Switch.OnCheckedChangeListener() {
 
@@ -261,7 +263,7 @@ public class NoteActivityFragment extends Fragment {
     }
 
 
-
+    //date picker that is called when you add a reminder
     private void chooseADate(final View root, final ArrayList<Note> history)
     {
         final Date now = new Date();
@@ -300,6 +302,8 @@ public class NoteActivityFragment extends Fragment {
         addNote(history);
     }
 
+    //called when you click a circle view to change the category,
+    //changes background colour
     private void changeBackground() {
         if (currentColour == Category.RED)
             colour_layout.setBackgroundColor(RED.getColor());
@@ -320,6 +324,7 @@ public class NoteActivityFragment extends Fragment {
 
     }
 
+    //undo button revert to before last edit
     private void undo(List<Note> hist) {
         if (hist.size() > 1) {
             undoing = true;
@@ -335,11 +340,12 @@ public class NoteActivityFragment extends Fragment {
                 addReminder.setEnabled(true);
                 addReminder.setText("ADD A REMINDER");
             }
-
             undoing = false;
         }
     }
 
+    //stores all changes in a list
+    // (I know a stack makes more sense but i thought of that after implementing the list & i'm lazy)
     private void addNote(ArrayList<Note> history)
     {
         Note note = new Note();
