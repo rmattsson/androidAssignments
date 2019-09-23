@@ -4,6 +4,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -17,18 +18,23 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.createnote.util.CircleView;
 import com.example.createnote.util.DatePickerDialogFragment;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.example.createnote.model.Note;
 import com.example.createnote.model.Category;
+import com.example.createnote.util.TimePickerDialogFragment;
 
 import org.w3c.dom.Text;
 
@@ -72,7 +78,7 @@ public class NoteActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_note, container, false);
+        final View root = inflater.inflate(R.layout.fragment_note, container, false);
 
         final ArrayList<Note> history = new ArrayList();
 
@@ -123,11 +129,7 @@ public class NoteActivityFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable editable) {
-                char[] keyStrokes = editable.toString().toCharArray();
-                String stBody = history.get(history.size() -1).getBody();
-                if (!undoing && keyStrokes[keyStrokes.length - 1] == ' ')
-                    addNote(history);
-                else if (editable.toString().length() - stBody.length() > 1)
+                if (!undoing)
                     addNote(history);
             }
         });
@@ -137,7 +139,7 @@ public class NoteActivityFragment extends Fragment {
         addReminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chooseADate();
+                chooseADate(root, history);
             }
         });
 
@@ -260,20 +262,42 @@ public class NoteActivityFragment extends Fragment {
 
 
 
-    private void chooseADate()
+    private void chooseADate(final View root, final ArrayList<Note> history)
     {
-        Date now = new Date();
+        final Date now = new Date();
         DatePickerDialogFragment dialogFragment = DatePickerDialogFragment.create(now, new DatePickerDialog.OnDateSetListener(){
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                Calendar calendar = Calendar.getInstance();
+                final Calendar calendar = Calendar.getInstance();
                 calendar.set(year, month, dayOfMonth);
-                reminder = calendar.getTime();
-                Toast.makeText(getContext(), reminder.toString(), Toast.LENGTH_LONG).show();
+
+
+                TimePickerDialogFragment timeDialogFragment = TimePickerDialogFragment.create(now, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                        calendar.set(calendar.MINUTE, minute);
+                        calendar.set(calendar.HOUR, hour);
+
+                        reminder = calendar.getTime();
+                        Toast.makeText(getContext(), reminder.toString(), Toast.LENGTH_LONG).show();
+
+                        SimpleDateFormat format = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.CANADA);
+                        addReminder = root.findViewById(R.id.addReminder_button);
+                        addReminder.setEnabled(false);
+                        addReminder.setText("reminder: " + format.format(reminder));
+                    }
+                });
+
+                timeDialogFragment.show(getFragmentManager(), "timePicker");
+
+
             }
         });
+
         dialogFragment.show(getFragmentManager(), "datePicker");
         hasReminder = true;
+
+        addNote(history);
     }
 
     private void changeBackground() {
@@ -306,6 +330,11 @@ public class NoteActivityFragment extends Fragment {
 
             title.setText(hist.get(hist.size() - 1).getTitle());
             body.setText(hist.get(hist.size() - 1).getBody());
+            if (hist.get(hist.size() - 1).isHasReminder())
+            {
+                addReminder.setEnabled(true);
+                addReminder.setText("ADD A REMINDER");
+            }
 
             undoing = false;
         }
@@ -328,6 +357,7 @@ public class NoteActivityFragment extends Fragment {
         note.setHasReminder(hasReminder);
         note.setReminder(reminder);
         history.add(note);
+        hasReminder = false;
     }
 
 }

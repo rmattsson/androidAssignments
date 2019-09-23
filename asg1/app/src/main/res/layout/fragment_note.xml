@@ -12,34 +12,30 @@
     <EditText
         android:id="@+id/title_editText"
         android:layout_width="390dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Title"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/divider"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.476"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/body_editText"
         android:layout_width="387dp"
-        android:layout_height="394dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_height="0dp"
         android:ems="10"
         android:gravity="top"
         android:hint="Body"
         android:inputType="textMultiLine|textPersonName|textImeMultiLine"
         android:scrollHorizontally="false"
         android:singleLine="false"
-        app:layout_constraintBottom_toTopOf="@+id/guideline75"
+        app:layout_constraintBottom_toTopOf="@+id/reminder_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
+        app:layout_constraintTop_toBottomOf="@+id/title_editText"
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
         android:id="@+id/reminder_layout"
@@ -47,7 +43,7 @@
         android:layout_height="wrap_content"
         android:background="#4D000000"
         android:orientation="vertical"
-        app:layout_constraintTop_toTopOf="@+id/guideline75"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         tools:layout_editor_absoluteX="210dp">
 
         <Button
@@ -143,40 +139,5 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
     </LinearLayout>
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="?android:attr/listDivider"
-        android:backgroundTint="#000000"
-        android:divider="#000000"
-        android:foregroundTint="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/guideline25"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline25"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="506dp" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline75"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="211dp"
-        app:layout_constraintGuide_percent="0.75" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline50"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="318dp"
-        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
