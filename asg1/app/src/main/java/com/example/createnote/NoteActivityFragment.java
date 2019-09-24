@@ -366,4 +366,5 @@ public class NoteActivityFragment extends Fragment {
         hasReminder = false;
     }
 
+
 }
