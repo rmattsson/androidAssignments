@@ -150,6 +150,7 @@ public class Note {
 
     @Override
     public String toString() {
+        /*
         return "Note{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
@@ -160,5 +161,7 @@ public class Note {
                 ", created=" + created +
                 ", modified=" + modified +
                 '}';
+                */
+         return title;
     }
 }
