@@ -34,11 +34,14 @@ public class NoteListActivityFragment extends Fragment {
 
         List<Note> data = NoteData.getData();
 
-        ArrayAdapter<Note> adapter = new ArrayAdapter<>(getContext(), R.layout.list_item_note, R.id.note_TextView);
 
-        adapter.addAll(data);
 
-        noteSpinner.setAdapter(adapter);
+
+        //ArrayAdapter<Note> adapter = new ArrayAdapter<>(getContext(), R.layout.list_item_note, R.id.note_TextView);
+
+        //adapter.addAll(data);
+
+        //noteSpinner.setAdapter(adapter);
 
         return root;
     }

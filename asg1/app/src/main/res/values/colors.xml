@@ -2,5 +2,12 @@
 <resources>
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="RED">#F44336</color>
+    <color name="ORANGE">#FF9800</color>
+    <color name="YELLOW">#FFEB3B</color>
+    <color name="GREEN">#8BC34A</color>
+    <color name="TEAL">#009688</color>
+    <color name="BLUE">#03A9F4</color>
+    <color name="INDIGO">#3F51B5</color>
+    <color name="PURPLE">#9C27B0</color>
 </resources>
