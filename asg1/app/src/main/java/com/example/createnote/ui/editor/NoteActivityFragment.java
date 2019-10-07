@@ -1,4 +1,4 @@
-package com.example.createnote;
+package com.example.createnote.ui.editor;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -21,10 +21,10 @@ import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.createnote.util.CircleView;
-import com.example.createnote.util.DatePickerDialogFragment;
+import com.example.createnote.R;
+import com.example.createnote.ui.util.CircleView;
+import com.example.createnote.ui.util.DatePickerDialogFragment;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,9 +34,7 @@ import java.util.Locale;
 
 import com.example.createnote.model.Note;
 import com.example.createnote.model.Category;
-import com.example.createnote.util.TimePickerDialogFragment;
-
-import org.w3c.dom.Text;
+import com.example.createnote.ui.util.TimePickerDialogFragment;
 
 /**
  * A placeholder fragment containing a simple view.

@@ -1,7 +1,8 @@
-package com.example.createnote;
+package com.example.createnote.ui.list;
 
 import android.os.Bundle;
 
+import com.example.createnote.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 

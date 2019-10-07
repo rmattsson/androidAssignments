@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#8BC34A"
-    tools:context=".NoteActivityFragment"
+    tools:context=".ui.editor.NoteActivityFragment"
     tools:showIn="@layout/activity_note">
 
     <EditText
@@ -57,56 +57,56 @@
             android:layout_height="68dp"
             android:orientation="horizontal">
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/red_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:circleColor="#F44336" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/orange_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:circleColor="#FF9800" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/yellow_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:circleColor="#FFEB3B" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/green_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 app:circleColor="#8BC34A" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/teal_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:circleColor="#009688" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/blue_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:circleColor="#03A9F4" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/indigo_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 app:circleColor="#3F51B5" />
 
-            <com.example.createnote.util.CircleView
+            <com.example.createnote.ui.util.CircleView
                 android:id="@+id/purple_circleView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

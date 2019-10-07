@@ -1,4 +1,4 @@
-package com.example.createnote.util;
+package com.example.createnote.ui.util;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class NoteData {
+public class SampleData {
 
     public static List<Note> data;
 

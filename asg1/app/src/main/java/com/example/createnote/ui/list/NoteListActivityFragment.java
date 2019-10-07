@@ -1,6 +1,10 @@
-package com.example.createnote;
+package com.example.createnote.ui.list;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,12 +13,11 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.example.createnote.model.Category;
+import com.example.createnote.R;
 import com.example.createnote.model.Note;
-import com.example.createnote.model.NoteData;
+import com.example.createnote.model.SampleData;
+import com.example.createnote.ui.adapter.NoteAdapter;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,17 +34,26 @@ public class NoteListActivityFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_note_list, container, false);
 
         Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
-
-        List<Note> data = NoteData.getData();
-
+        RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
 
 
+        List<Note> data = SampleData.getData();
 
-        //ArrayAdapter<Note> adapter = new ArrayAdapter<>(getContext(), R.layout.list_item_note, R.id.note_TextView);
+        NoteAdapter adapter = new NoteAdapter(data);
+
+
+        //ArrayAdapter<Note> adapter = new ArrayAdapter<>(getContext(), R.layout.list_item_note, R.id.title_TextView);
+
 
         //adapter.addAll(data);
 
         //noteSpinner.setAdapter(adapter);
+
+        noteRecycler.setAdapter(adapter);
+
+
+        sortNotes(noteRecycler);
+
 
         return root;
     }
@@ -57,4 +69,12 @@ public class NoteListActivityFragment extends Fragment {
         }
     }
 */
+
+    private void sortNotes (RecyclerView recycler)
+    {
+
+        recycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
+    }
+
+
 }
