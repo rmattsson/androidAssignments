@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
@@ -18,6 +19,8 @@ import com.example.createnote.model.Note;
 import com.example.createnote.model.SampleData;
 import com.example.createnote.ui.adapter.NoteAdapter;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -33,26 +36,26 @@ public class NoteListActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_note_list, container, false);
 
-        Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
-        RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
+        final Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
+        final RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
 
+        final List<Note> data = SampleData.getData();
 
-        List<Note> data = SampleData.getData();
-
-        NoteAdapter adapter = new NoteAdapter(data);
-
-
-        //ArrayAdapter<Note> adapter = new ArrayAdapter<>(getContext(), R.layout.list_item_note, R.id.title_TextView);
-
-
-        //adapter.addAll(data);
-
-        //noteSpinner.setAdapter(adapter);
-
+        final NoteAdapter adapter = new NoteAdapter(data);
+        sortNotes(noteRecycler, adapter, 0, data);
         noteRecycler.setAdapter(adapter);
+        noteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                sortNotes(noteRecycler, adapter, l, data);
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
 
-        sortNotes(noteRecycler);
+            }
+        });
+
 
 
         return root;
@@ -70,10 +73,78 @@ public class NoteListActivityFragment extends Fragment {
     }
 */
 
-    private void sortNotes (RecyclerView recycler)
+
+
+    private void sortNotes (RecyclerView recycler,NoteAdapter adapter, long l, List<Note> data)
     {
 
+        if (l==0) {
+
+            //sort by title
+            data.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note lhs, Note rhs) {
+                    return (lhs.getTitle().compareTo(rhs.getTitle()));
+                }
+            });
+        }
+        else if (l==1) {
+
+            //sort by Creation Date
+            data.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note lhs, Note rhs) {
+                    return (lhs.getCreated().compareTo(rhs.getCreated()));
+                }
+            });
+        }
+        else if (l==2) {
+
+            //sort by Last Modified
+            data.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note lhs, Note rhs) {
+                    return (lhs.getModified().compareTo(rhs.getModified()));
+                }
+            });
+        }
+        else if (l==3) {
+
+            //sort by Reminder
+            data.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note lhs, Note rhs) {
+
+
+                    if (!lhs.isHasReminder())
+                    {
+                        return 1;
+
+                    }
+                    if (!rhs.isHasReminder())
+                    {
+                        return -1;
+                    }
+
+                        return (lhs.getReminder().compareTo(rhs.getReminder()));
+
+                }
+            });
+        }
+        else if (l==4) {
+
+            //sort by Category
+            data.sort(new Comparator<Note>() {
+                @Override
+                public int compare(Note lhs, Note rhs) {
+                    return (lhs.getCategory().compareTo(rhs.getCategory()));
+                }
+            });
+        }
+
+
         recycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        adapter.notifyDataSetChanged();
     }
 
 
