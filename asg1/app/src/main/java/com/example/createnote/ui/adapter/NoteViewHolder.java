@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.createnote.R;
 import com.example.createnote.model.Category;
 import com.example.createnote.model.Note;
+
+import static java.security.AccessController.getContext;
 
 public class NoteViewHolder extends RecyclerView.ViewHolder {
 
@@ -100,7 +103,22 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-                return false;
+                String text ="";
+                switch (menuItem.getItemId())
+                {
+                    case R.id.reminder_MenuItem:
+                        text = "Reminder";
+                        break;
+                    case R.id.trash_MenuItem:
+                        text = "Trash";
+                        break;
+                    case R.id.close_MenuItem:
+                        text = "Close";
+                        actionMode.finish();
+                        break;
+                }
+                Toast.makeText(root.getContext(), text, Toast.LENGTH_LONG).show();
+                return true;
             }
 
             @Override

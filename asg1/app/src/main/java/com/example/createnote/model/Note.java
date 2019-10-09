@@ -1,12 +1,14 @@
 package com.example.createnote.model;
 
+import com.example.createnote.sqlite.Identifiable;
+
 import java.util.Date;
 
 /**
  * Represent a single note in the "Notes" app.
  * @author Ian Clement (ian.clement@johnabbott.qc.ca)
  */
-public class Note {
+public class Note implements Identifiable<Long> {
 
     // basic note elements
     private long id;
@@ -59,14 +61,6 @@ public class Note {
         this.modified = modified;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public Note setId(long id) {
-        this.id = id;
-        return this;
-    }
 
     public String getTitle() {
         return title;
@@ -163,5 +157,15 @@ public class Note {
                 '}';
                 */
          return title;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
     }
 }
