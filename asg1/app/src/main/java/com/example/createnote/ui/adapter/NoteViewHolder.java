@@ -2,13 +2,17 @@ package com.example.createnote.ui.adapter;
 
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.res.Resources;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +22,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.createnote.R;
 import com.example.createnote.model.Category;
 import com.example.createnote.model.Note;
+import com.example.createnote.model.NoteDatabaseHandler;
+import com.example.createnote.sqlite.DatabaseException;
+import com.example.createnote.ui.list.NoteListActivityFragment;
+import com.example.createnote.ui.util.DatePickerDialogFragment;
+import com.example.createnote.ui.util.TimePickerDialogFragment;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import static java.security.AccessController.getContext;
 
@@ -25,14 +39,18 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     //public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
+    private long noteId;
 
     private final TextView title;
     private final TextView body;
     private final TextView reminder;
     private final CardView card;
     private final View root;
+    private NoteListActivityFragment fragment;
+    private NoteDatabaseHandler dbHandler;
+    private NoteAdapter adapter;
 
-    public NoteViewHolder(@NonNull View root) {
+    public NoteViewHolder(@NonNull View root, NoteListActivityFragment fragment , NoteDatabaseHandler dbHandler, NoteAdapter adapter) {
         super(root);
 
         title = root.findViewById(R.id.title_TextView);
@@ -40,6 +58,9 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         reminder = root.findViewById(R.id.reminder_TextView);
         card = root.findViewById(R.id.cardView);
         this.root = root;
+        this.fragment = fragment;
+        this.dbHandler = dbHandler;
+        this.adapter = adapter;
         card.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -54,6 +75,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
         title.setText(note.getTitle());
         body.setText(note.getBody());
+        noteId = note.getId();
 
         if(note.isHasReminder() == true)
             reminder.setText(note.getReminder().toString());
@@ -108,8 +130,72 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                 {
                     case R.id.reminder_MenuItem:
                         text = "Reminder";
+
+                        final Date now = new Date();
+                        DatePickerDialogFragment dialogFragment = DatePickerDialogFragment.create(now, new DatePickerDialog.OnDateSetListener(){
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                final Calendar calendar = Calendar.getInstance();
+                                calendar.set(year, month, dayOfMonth);
+
+
+                                TimePickerDialogFragment timeDialogFragment = TimePickerDialogFragment.create(now, new TimePickerDialog.OnTimeSetListener() {
+                                    @Override
+                                    public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+                                        calendar.set(calendar.MINUTE, minute);
+                                        calendar.set(calendar.HOUR, hour);
+
+                                        Date newReminder = calendar.getTime();
+                                        Toast.makeText(fragment.getContext(), newReminder.toString(), Toast.LENGTH_LONG).show();
+
+                                        //SimpleDateFormat format = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.CANADA);
+
+                                        ///*
+
+                                        try {
+
+                                            Note selectedNote = dbHandler.getNoteTable().read(noteId);
+                                            selectedNote.setHasReminder(true);
+                                            selectedNote.setReminder(newReminder);
+                                            adapter.notifyDataSetChanged();
+
+                                        } catch (DatabaseException e) {
+                                            e.printStackTrace();
+                                        }
+
+
+                                        //*/
+
+
+
+                                    }
+                                });
+
+                                timeDialogFragment.show(fragment.getFragmentManager(), "timePicker");
+
+
+                            }
+                        });
+
+                        dialogFragment.show(fragment.getFragmentManager(), "datePicker");
+
+                        //TODO
+                        //update note
+
                         break;
                     case R.id.trash_MenuItem:
+
+
+                        try {
+
+                            Note selectedNote = dbHandler.getNoteTable().read(noteId);
+                            dbHandler.getNoteTable().delete(selectedNote);
+                            adapter.notifyDataSetChanged();
+
+                        } catch (DatabaseException e) {
+                            e.printStackTrace();
+                        }
+
                         text = "Trash";
                         break;
                     case R.id.close_MenuItem:

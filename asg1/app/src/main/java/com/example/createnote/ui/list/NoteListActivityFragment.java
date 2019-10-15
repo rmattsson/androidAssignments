@@ -16,7 +16,9 @@ import android.widget.Spinner;
 
 import com.example.createnote.R;
 import com.example.createnote.model.Note;
+import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.SampleData;
+import com.example.createnote.sqlite.DatabaseException;
 import com.example.createnote.ui.adapter.NoteAdapter;
 
 import java.util.ArrayList;
@@ -31,6 +33,8 @@ public class NoteListActivityFragment extends Fragment {
     public NoteListActivityFragment() {
     }
 
+    List<Note> data = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -38,10 +42,15 @@ public class NoteListActivityFragment extends Fragment {
 
         final Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
         final RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
+        NoteDatabaseHandler dbHandler = new NoteDatabaseHandler(getContext());
 
-        final List<Note> data = SampleData.getData();
+        try {
+            data = dbHandler.getNoteTable().readAll();
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
 
-        final NoteAdapter adapter = new NoteAdapter(data);
+        final NoteAdapter adapter = new NoteAdapter(data, this, dbHandler);
         sortNotes(noteRecycler, adapter, 0, data);
         noteRecycler.setAdapter(adapter);
         noteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
