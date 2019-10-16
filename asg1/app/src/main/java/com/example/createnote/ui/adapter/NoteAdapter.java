@@ -18,16 +18,17 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteViewHolder> {
 
+    //fields
     private List<Note> data;
     private NoteListActivityFragment fragment;
     private NoteDatabaseHandler dbHandler;
 
+    //constructor
     public NoteAdapter(List<Note> data, NoteListActivityFragment fragment, NoteDatabaseHandler dbHandler){
         this.data = data;
         this.fragment = fragment;
         this.dbHandler = dbHandler;
     }
-
 
     @NonNull
     @Override

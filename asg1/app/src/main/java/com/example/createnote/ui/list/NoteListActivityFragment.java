@@ -26,33 +26,45 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * A placeholder fragment containing a simple view.
+ * A fragment containing a view for a list of notes
  */
 public class NoteListActivityFragment extends Fragment {
 
     public NoteListActivityFragment() {
     }
 
+    //Data is initiallized be should receive notes from a database later on.
     List<Note> data = new ArrayList<>();
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         View root = inflater.inflate(R.layout.fragment_note_list, container, false);
 
+        //get the spinner, recycler view and the database handler
         final Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
         final RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
         NoteDatabaseHandler dbHandler = new NoteDatabaseHandler(getContext());
 
         try {
+            //populate data list with notes from the database
             data = dbHandler.getNoteTable().readAll();
         } catch (DatabaseException e) {
+
             e.printStackTrace();
         }
 
+        //create the adapter
         final NoteAdapter adapter = new NoteAdapter(data, this, dbHandler);
+
+        //sort notes by title as default
         sortNotes(noteRecycler, adapter, 0, data);
+
         noteRecycler.setAdapter(adapter);
+
+        //set a listener for when the selected item changes, inner class will call sortNotes()
         noteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
@@ -65,25 +77,10 @@ public class NoteListActivityFragment extends Fragment {
             }
         });
 
-
-
         return root;
     }
 
-
-    /*
-    List<Todo> data = SampleData.GetData();
-    data.sort(new comparator<todo>)() {
-        @Override
-                public int compare(Todo lhs, Todo rhs)
-        {
-            return (int) (rhs.getUrgency() - lhs.getUrgency());
-        }
-    }
-*/
-
-
-
+    //this method sorts notes based on which spinner item is selected, the choice is sent as a long
     private void sortNotes (RecyclerView recycler,NoteAdapter adapter, long l, List<Note> data)
     {
 
@@ -151,7 +148,7 @@ public class NoteListActivityFragment extends Fragment {
             });
         }
 
-
+        //redraw the page
         recycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
         adapter.notifyDataSetChanged();
     }
