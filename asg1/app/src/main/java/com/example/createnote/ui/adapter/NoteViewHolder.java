@@ -35,12 +35,15 @@ import java.util.Locale;
 
 import static java.security.AccessController.getContext;
 
+//////////////////////////////////////////////////////////////////////
+//  This Class gets very confusing but i'll walk you through it!!   //
+//////////////////////////////////////////////////////////////////////
 public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     //public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd hh:mm");
 
+    //fields
     private long noteId;
-
     private final TextView title;
     private final TextView body;
     private final TextView reminder;
@@ -50,6 +53,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     private NoteDatabaseHandler dbHandler;
     private NoteAdapter adapter;
 
+    //constructor
     public NoteViewHolder(@NonNull View root, NoteListActivityFragment fragment , NoteDatabaseHandler dbHandler, NoteAdapter adapter) {
         super(root);
 
@@ -61,6 +65,8 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         this.fragment = fragment;
         this.dbHandler = dbHandler;
         this.adapter = adapter;
+
+        //calls on touch when a cardview is touched
         card.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -70,7 +76,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     }
 
-
+    //sets each not in the database to a card view
     public void set(Note note) {
 
         title.setText(note.getTitle());
@@ -82,11 +88,15 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         else
             reminder.setText("");
 
+        //get category for colour
         Category x = note.getCategory();
+
+        //changes background colour
         changeBackground(x, card);
 
     }
 
+    //this sets the background colour of the note
     @SuppressLint("ResourceAsColor")
     private void changeBackground(Category x, CardView card) {
         Resources res = root.getResources();
@@ -109,8 +119,14 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
     }
 
+    //brings up a menu when a note is touched
     private boolean touchMenu(View view, MotionEvent motionEvent){
+
+        //make an action mode that inflates menu_floating.xml
         ActionMode actionMode;
+
+
+        //inner class for the floating menu click events!!!!
         actionMode = view.startActionMode(new ActionMode.Callback2() {
             @Override
             public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -123,22 +139,33 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                 return false;
             }
 
+
+            //this method is called when an action item in the floating method was clicked
             @Override
             public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+
+                //text is used for testing purposes
+                //it keeps track of which action item was pressed
                 String text ="";
+
                 switch (menuItem.getItemId())
                 {
                     case R.id.reminder_MenuItem:
+
+                        //reminder was pressed
                         text = "Reminder";
 
+                        //current date
                         final Date now = new Date();
+
+                        //datepickerdialog to allow the user to pick a new date for the reminder
                         DatePickerDialogFragment dialogFragment = DatePickerDialogFragment.create(now, new DatePickerDialog.OnDateSetListener(){
                             @Override
                             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                                 final Calendar calendar = Calendar.getInstance();
                                 calendar.set(year, month, dayOfMonth);
 
-
+                                //datepickerdialog to allow the user to pick a new time for the reminder
                                 TimePickerDialogFragment timeDialogFragment = TimePickerDialogFragment.create(now, new TimePickerDialog.OnTimeSetListener() {
                                     @Override
                                     public void onTimeSet(TimePicker timePicker, int hour, int minute) {
@@ -146,66 +173,84 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                                         calendar.set(calendar.HOUR, hour);
 
                                         Date newReminder = calendar.getTime();
-                                        Toast.makeText(fragment.getContext(), newReminder.toString(), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(fragment.getContext(), "restart app to see changes", Toast.LENGTH_LONG).show();
 
                                         //SimpleDateFormat format = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.CANADA);
 
                                         ///*
 
                                         try {
-
+                                            //get the note that was touched
                                             Note selectedNote = dbHandler.getNoteTable().read(noteId);
+
+                                            //delete the note from the database
+                                            dbHandler.getNoteTable().delete(selectedNote);
+
+                                            //update the note
                                             selectedNote.setHasReminder(true);
                                             selectedNote.setReminder(newReminder);
+                                            selectedNote.setModified(now);
+
+                                            //put it back in the database!
+                                            dbHandler.getNoteTable().create(selectedNote);
+
+                                            //tell the adapter to redraw (doesn't work)
                                             adapter.notifyDataSetChanged();
 
                                         } catch (DatabaseException e) {
                                             e.printStackTrace();
                                         }
 
-
                                         //*/
-
-
-
                                     }
                                 });
 
+                                //open time dialog
                                 timeDialogFragment.show(fragment.getFragmentManager(), "timePicker");
 
 
                             }
                         });
 
+                        //open date dialog
                         dialogFragment.show(fragment.getFragmentManager(), "datePicker");
-
-                        //TODO
-                        //update note
 
                         break;
                     case R.id.trash_MenuItem:
 
+                        //trash was pressed
+                        text = "Trash, restart app to see changes";
 
                         try {
-
+                            //get the note that was touched
                             Note selectedNote = dbHandler.getNoteTable().read(noteId);
+
+                            //delete the note
                             dbHandler.getNoteTable().delete(selectedNote);
+
+                            //tell the adapter to redraw (doesn't work)
                             adapter.notifyDataSetChanged();
 
                         } catch (DatabaseException e) {
                             e.printStackTrace();
                         }
 
-                        text = "Trash";
                         break;
                     case R.id.close_MenuItem:
+
+                        //close was pressed
                         text = "Close";
+
+                        //close the floating menu
                         actionMode.finish();
                         break;
                 }
+                //for debugging, displays the action item that was pressed
                 Toast.makeText(root.getContext(), text, Toast.LENGTH_LONG).show();
                 return true;
             }
+
+
 
             @Override
             public void onDestroyActionMode(ActionMode actionMode) {
