@@ -1,5 +1,11 @@
 package com.example.createnote.model;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
+import com.example.createnote.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -44,6 +50,18 @@ public class SampleData {
             //should not happen
         }
                 return data;
+    }
+
+    public static List<User> getUsers(Context context)
+    {
+        List<User> users =new ArrayList<User>();
+
+        users.add(new User(1, "Ian", BitmapFactory.decodeResource(context.getResources(), R.drawable.ian), "email"));
+        users.add(new User(2, "jim", BitmapFactory.decodeResource(context.getResources(), R.drawable.jim), "email"));
+        users.add(new User(3, "sandy", BitmapFactory.decodeResource(context.getResources(), R.drawable.sandy), "email"));
+        users.add(new User(4, "aref", BitmapFactory.decodeResource(context.getResources(), R.drawable.aref), "email"));
+
+        return users;
     }
 
 }
