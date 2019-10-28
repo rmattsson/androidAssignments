@@ -3,6 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
+        android:id="@+id/edit_MenuItem"
+        android:title="Edit"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/reminder_MenuItem"
         android:title="Reminder"
         app:showAsAction="always" />
