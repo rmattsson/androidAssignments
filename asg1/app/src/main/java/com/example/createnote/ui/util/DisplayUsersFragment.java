@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.createnote.R;
+import com.example.createnote.model.Collaborator;
 import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.User;
+import com.example.createnote.sqlite.DatabaseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +44,7 @@ public class DisplayUsersFragment extends Fragment {
     // display the users
     private ImageView addUserImageView;
     private List<User> users;
+    private List<User> collabs;
     private RecyclerView usersRecyclerView;
 
     // listeners
@@ -83,7 +86,15 @@ public class DisplayUsersFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_display_users, container, false);
 
         NoteDatabaseHandler DBhandler = new NoteDatabaseHandler(getContext());
-        List<User> users = DBhandler.getUserTable();
+        users = null;
+        collabs = null;
+        try {
+
+            users = DBhandler.getUserTable().readAll();
+
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
 
 
         // initialize user
@@ -93,9 +104,33 @@ public class DisplayUsersFragment extends Fragment {
             public void onClick(View v) {
                 if(onAddUserRequestedListener != null)
                     onAddUserRequestedListener.onAddUserRequested();
-                Toast.makeText(getContext(), "click", Toast.LENGTH_LONG).show();
-                AddCollaboratorDialogFragment addCollaborator = new AddCollaboratorDialogFragment();
+                AddCollaboratorDialogFragment addCollaborator = new AddCollaboratorDialogFragment(users);
                 addCollaborator.show(getFragmentManager(), "add collaborator");
+//                try {
+//
+//                    List<Collaborator> colls = DBhandler.getcollaboratorTable().readAll();
+//
+//                } catch (DatabaseException e) {
+//                    e.printStackTrace();
+//                }
+                collabs = addCollaborator.getUsers();
+                for (User col: collabs)
+                {
+                    Collaborator c = new Collaborator();
+                    c.setUserId(col.getId());
+
+                    //TODO
+
+                    //c.setNoteId();
+                    try {
+                        DBhandler.getcollaboratorTable().update(c);
+                    } catch (DatabaseException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+
             }
         });
 
