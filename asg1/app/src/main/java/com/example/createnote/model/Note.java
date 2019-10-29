@@ -74,7 +74,10 @@ public class Note implements Identifiable<Long>, Parcelable {
         body = in.readString();
         category = Category.values()[in.readInt() -1];
         hasReminder = in.readByte() != 0;
-        reminder = new Date(in.readLong());
+        reminder=null;
+        if (hasReminder) {
+            reminder = new Date(in.readLong());
+        }
         created = new Date(in.readLong());
         modified = new Date(in.readLong());
     }
@@ -214,13 +217,14 @@ public class Note implements Identifiable<Long>, Parcelable {
         if(hasReminder)
         {
             parcel.writeByte((byte) 1);
+            parcel.writeLong(reminder.getTime());
         }
         else
         {
             parcel.writeByte((byte) 0);
         }
 
-        parcel.writeLong(reminder.getTime());
+
 
         parcel.writeLong(created.getTime());
         parcel.writeLong(modified.getTime());

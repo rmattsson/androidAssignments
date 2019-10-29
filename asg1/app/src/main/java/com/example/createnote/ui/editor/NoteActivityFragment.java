@@ -64,6 +64,7 @@ public class NoteActivityFragment extends Fragment {
     private Category currentColour = Category.GREEN;
     private boolean hasReminder;
     private Date reminder = null;
+    private ArrayList<Note> history;
 
     //this will prevent a new note being created when the editTexts changes while undoing
     private boolean undoing = false;
@@ -79,7 +80,7 @@ public class NoteActivityFragment extends Fragment {
         Note n = getActivity().getIntent().getParcelableExtra("Note");
         final View root = inflater.inflate(R.layout.fragment_note, container, false);
 
-        final ArrayList<Note> history = new ArrayList();
+        history = new ArrayList();
 
 
 
@@ -338,13 +339,35 @@ public class NoteActivityFragment extends Fragment {
 
             title.setText(hist.get(hist.size() - 1).getTitle());
             body.setText(hist.get(hist.size() - 1).getBody());
+            SimpleDateFormat format = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.CANADA);
             if (hist.get(hist.size() - 1).isHasReminder())
+            {
+                addReminder.setText("reminder: " + format.format(hist.get(hist.size() -1).getReminder()));
+                addReminder.setEnabled(false);
+            }
+            else
             {
                 addReminder.setEnabled(true);
                 addReminder.setText("ADD A REMINDER");
             }
             undoing = false;
         }
+    }
+
+    public Note getNote() {
+        if (history.size() > 1) {
+
+            return history.get(history.size() - 1);
+        }
+        return null;
+    }
+
+    public Note getFirstNote() {
+        if (history.size() >= 1) {
+
+            return history.get(1);
+        }
+        return null;
     }
 
     //stores all changes in a list
@@ -366,7 +389,7 @@ public class NoteActivityFragment extends Fragment {
         note.setHasReminder(hasReminder);
         note.setReminder(reminder);
         history.add(note);
-        hasReminder = false;
+        //hasReminder = false;
     }
 
 

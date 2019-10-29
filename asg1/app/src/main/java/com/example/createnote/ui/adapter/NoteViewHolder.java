@@ -259,7 +259,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                         break;
                 }
                 //for debugging, displays the action item that was pressed
-                Toast.makeText(root.getContext(), text, Toast.LENGTH_LONG).show();
+                //Toast.makeText(root.getContext(), text, Toast.LENGTH_LONG).show();
                 return true;
             }
 
