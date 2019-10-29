@@ -70,17 +70,15 @@ public class NoteActivityFragment extends Fragment {
 
 
     public NoteActivityFragment() {
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Note n = getActivity().getIntent().getParcelableExtra("Note");
+
         final View root = inflater.inflate(R.layout.fragment_note, container, false);
 
         final ArrayList<Note> history = new ArrayList();
-
 
 
 
@@ -259,9 +257,6 @@ public class NoteActivityFragment extends Fragment {
             }
         });
 
-        history.add(n);
-        history.add(n);
-        undo(history);
         return root;
     }
 

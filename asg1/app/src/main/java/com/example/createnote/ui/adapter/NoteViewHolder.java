@@ -4,7 +4,6 @@ package com.example.createnote.ui.adapter;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.view.ActionMode;
 import android.view.Menu;
@@ -25,8 +24,6 @@ import com.example.createnote.model.Category;
 import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.sqlite.DatabaseException;
-import com.example.createnote.ui.editor.NoteActivity;
-import com.example.createnote.ui.editor.NoteActivityFragment;
 import com.example.createnote.ui.list.NoteListActivityFragment;
 import com.example.createnote.ui.util.DatePickerDialogFragment;
 import com.example.createnote.ui.util.TimePickerDialogFragment;
@@ -55,7 +52,6 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     private NoteListActivityFragment fragment;
     private NoteDatabaseHandler dbHandler;
     private NoteAdapter adapter;
-    private Note n;
 
     //constructor
     public NoteViewHolder(@NonNull View root, NoteListActivityFragment fragment , NoteDatabaseHandler dbHandler, NoteAdapter adapter) {
@@ -97,8 +93,6 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
         //changes background colour
         changeBackground(x, card);
-        n = note;
-
 
     }
 
@@ -156,13 +150,6 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
                 switch (menuItem.getItemId())
                 {
-                    case R.id.edit_MenuItem:
-
-                        Intent i = new Intent(view.getContext(), NoteActivity.class);
-                        i.putExtra("Note", n);
-                        view.getContext().startActivity(i);
-
-                        break;
                     case R.id.reminder_MenuItem:
 
                         //reminder was pressed

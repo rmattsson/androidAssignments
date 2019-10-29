@@ -17,12 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.createnote.R;
-import com.example.createnote.model.Collaborator;
-import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.User;
-import com.example.createnote.sqlite.DatabaseException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,7 +33,6 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
 
     // data source and data adapter
     private List<User> collaborators;
-    private List<User> added = new ArrayList<User>();
     private CollaboratorAdapter adapter;
 
     public AddCollaboratorDialogFragment() {
@@ -55,7 +50,7 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
 
         //
         collaboratorsRecyclerView = root.findViewById(R.id.collaborators_RecyclerView);
-        adapter = new CollaboratorAdapter(added);
+        adapter = new CollaboratorAdapter();
         collaboratorsRecyclerView.setAdapter(adapter);
         collaboratorsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         collaboratorsRecyclerView.setHasFixedSize(true);
@@ -69,12 +64,6 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
      * Curtom adapter to display users
      */
     private class CollaboratorAdapter extends RecyclerView.Adapter<AddCollaboratorDialogFragment.CollaboratorViewHolder> {
-
-        public List<User> added;
-        public CollaboratorAdapter(List<User> list){
-            added = list;
-        }
-
         @NonNull
         @Override
         public AddCollaboratorDialogFragment.CollaboratorViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -108,15 +97,13 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
             super(itemView);
             collaboratorNameTextView = itemView.findViewById(R.id.collaboratorName_TextView);
             avatarImageView = itemView.findViewById(R.id.avatar_ImageView);
-
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // remove the clicked item from the list
                     int position = collaborators.indexOf(user);
-                    User newCollaborator = collaborators.remove(position);
+                    collaborators.remove(position);
                     adapter.notifyItemRemoved(position);
-                    adapter.added.add(newCollaborator);
                 }
             });
         }
@@ -130,10 +117,5 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
             collaboratorNameTextView.setText(user.getName());
             avatarImageView.setImageBitmap(user.getAvatar());
         }
-
-    }
-    public List<User> getUsers()
-    {
-        return added;
     }
 }
