@@ -43,6 +43,13 @@ public class Note implements Identifiable<Long>, Parcelable {
      */
     public Note(long id) {
         this.id = id;
+        this.title = "";
+        this.body = "";
+        this.category = Category.ORANGE;
+        this.hasReminder = false;
+        this.reminder = null;
+        this.created = new Date();
+        this.modified = new Date();
     }
 
     /**

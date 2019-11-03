@@ -30,10 +30,12 @@ import com.example.createnote.ui.editor.NoteActivityFragment;
 import com.example.createnote.ui.list.NoteListActivityFragment;
 import com.example.createnote.ui.util.DatePickerDialogFragment;
 import com.example.createnote.ui.util.TimePickerDialogFragment;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static java.security.AccessController.getContext;
@@ -158,9 +160,21 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                 {
                     case R.id.edit_MenuItem:
 
+                        //store previous data incase the user wants to undo their changes.
+                        try {
+                            List<Note> newData = dbHandler.getNoteTable().readAll();
+                        } catch (DatabaseException e) {
+                            e.printStackTrace();
+                        }
+
                         Intent i = new Intent(view.getContext(), NoteActivity.class);
                         i.putExtra("Note", n);
                         view.getContext().startActivity(i);
+
+                        //snackbar
+                        Snackbar snackbar = Snackbar
+                                .make(root, "hello world", Snackbar.LENGTH_LONG);
+                        snackbar.show();
 
                         break;
                     case R.id.reminder_MenuItem:

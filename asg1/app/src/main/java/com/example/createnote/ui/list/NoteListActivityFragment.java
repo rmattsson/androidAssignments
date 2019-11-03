@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.createnote.R;
 import com.example.createnote.model.Note;
@@ -20,6 +21,8 @@ import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.SampleData;
 import com.example.createnote.sqlite.DatabaseException;
 import com.example.createnote.ui.adapter.NoteAdapter;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -46,6 +49,7 @@ public class NoteListActivityFragment extends Fragment {
         //get the spinner, recycler view and the database handler
         final Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
         final RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
+
         NoteDatabaseHandler dbHandler = new NoteDatabaseHandler(getContext());
 
         try {
@@ -76,6 +80,8 @@ public class NoteListActivityFragment extends Fragment {
 
             }
         });
+
+
 
         return root;
     }
