@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.createnote.R;
 import com.example.createnote.model.Collaborator;
+import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.User;
 import com.example.createnote.sqlite.DatabaseException;
@@ -39,12 +40,15 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
     private List<User> collaborators;
     private List<User> added = new ArrayList<User>();
     private CollaboratorAdapter adapter;
+    private long note;
 
     public AddCollaboratorDialogFragment() {
+
     }
 
-    public AddCollaboratorDialogFragment(List<User> collaborators) {
+    public AddCollaboratorDialogFragment(List<User> collaborators, long n) {
         this.collaborators = collaborators;
+        this.note=n;
     }
 
 
@@ -70,9 +74,10 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
      */
     private class CollaboratorAdapter extends RecyclerView.Adapter<AddCollaboratorDialogFragment.CollaboratorViewHolder> {
 
+        public List<User> allUsers;
         public List<User> added;
         public CollaboratorAdapter(List<User> list){
-            added = list;
+            allUsers = list;
         }
 
         @NonNull
@@ -109,6 +114,8 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
             collaboratorNameTextView = itemView.findViewById(R.id.collaboratorName_TextView);
             avatarImageView = itemView.findViewById(R.id.avatar_ImageView);
 
+
+
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -116,7 +123,24 @@ public class AddCollaboratorDialogFragment extends DialogFragment {
                     int position = collaborators.indexOf(user);
                     User newCollaborator = collaborators.remove(position);
                     adapter.notifyItemRemoved(position);
-                    adapter.added.add(newCollaborator);
+                    adapter.allUsers.add(newCollaborator);
+
+                    //add the collaborator that was clicked to the database
+                    NoteDatabaseHandler DBhandler = new NoteDatabaseHandler(getContext());
+                    Collaborator c = new Collaborator();
+                    c.setUserId(newCollaborator.getId());
+                    c.setNoteId(note);
+
+                    //add the user to a list that will be passed to the display users fragment
+                    //i dont think im using anymore but im too scared ill break something and this assignment is due in a matter of minutes
+                    added.add(newCollaborator);
+
+
+                    try {
+                        DBhandler.getcollaboratorTable().create(c);
+                    } catch (DatabaseException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.createnote.R;
 import com.example.createnote.model.Collaborator;
+import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.User;
 import com.example.createnote.sqlite.DatabaseException;
@@ -29,6 +31,7 @@ import java.util.List;
 public class DisplayUsersFragment extends Fragment {
 
 
+    private long nid;
 
     /**
      * Listener for the request to add a user event.
@@ -86,10 +89,11 @@ public class DisplayUsersFragment extends Fragment {
 
         NoteDatabaseHandler DBhandler = new NoteDatabaseHandler(getContext());
         users = null;
-        collabs = null;
+        collabs = new ArrayList<>();
         try {
 
             users = DBhandler.getUserTable().readAll();
+
 
         } catch (DatabaseException e) {
             e.printStackTrace();
@@ -103,35 +107,16 @@ public class DisplayUsersFragment extends Fragment {
             public void onClick(View v) {
                 if(onAddUserRequestedListener != null)
                     onAddUserRequestedListener.onAddUserRequested();
-                AddCollaboratorDialogFragment addCollaborator = new AddCollaboratorDialogFragment(users);
+                AddCollaboratorDialogFragment addCollaborator = new AddCollaboratorDialogFragment(users, nid);
                 addCollaborator.show(getFragmentManager(), "add collaborator");
-//                try {
-//
-//                    List<Collaborator> colls = DBhandler.getcollaboratorTable().readAll();
-//
-//                } catch (DatabaseException e) {
-//                    e.printStackTrace();
-//                }
-                collabs = addCollaborator.getUsers();
-                for (User col: collabs)
-                {
-                    Collaborator c = new Collaborator();
-                    c.setUserId(col.getId());
 
-                    //TODO
+                setNote(nid);
 
-                    //c.setNoteId();
-                    try {
-                        DBhandler.getcollaboratorTable().update(c);
-                    } catch (DatabaseException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
+               usersRecyclerView.getAdapter().notifyDataSetChanged();
 
             }
         });
+
 
         // setup the recyclerview
         usersRecyclerView = root.findViewById(R.id.users_RecyclerView);
@@ -152,16 +137,39 @@ public class DisplayUsersFragment extends Fragment {
 
             @Override
             public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-                holder.set(users.get(position));
+                holder.set(collabs.get(position));
             }
 
             @Override
             public int getItemCount() {
-                return users.size();
+                return collabs.size();
             }
         });
 
+
+
         return root;
+    }
+
+    //get the note
+    public void setNote(long noteID)
+    {
+        this.nid=noteID;
+
+        NoteDatabaseHandler DBhandler = new NoteDatabaseHandler(getContext());
+
+        //List<Collaborator> collaborators = null;
+        try {
+            List<Collaborator> collaborators = DBhandler.getcollaboratorTable().readAll();
+            for(Collaborator c: collaborators) {
+                if (c.getNoteId() == nid) {
+                    collabs.add(DBhandler.getUserTable().read(c.getUserId()));
+                }
+            }
+        } catch (DatabaseException e) {
+            e.printStackTrace();
+        }
+
     }
 
     // View holder for the users

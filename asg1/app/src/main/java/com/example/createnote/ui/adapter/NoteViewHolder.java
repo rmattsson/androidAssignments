@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.createnote.R;
@@ -33,6 +34,7 @@ import com.example.createnote.ui.util.TimePickerDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +60,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     private NoteDatabaseHandler dbHandler;
     private NoteAdapter adapter;
     private Note n;
+    private List<Note> tempData;
 
     //constructor
     public NoteViewHolder(@NonNull View root, NoteListActivityFragment fragment , NoteDatabaseHandler dbHandler, NoteAdapter adapter) {
@@ -71,15 +74,33 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         this.fragment = fragment;
         this.dbHandler = dbHandler;
         this.adapter = adapter;
+        //this.newData = new ArrayList<>();
 
         //calls on touch when a cardview is touched
+
         card.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 return touchMenu(view, motionEvent);
             }
+
+
         });
 
+
+        if (n != null) {
+            Snackbar snackbar = Snackbar
+                    .make(root, "Would you like to undo your changes?", 10000)
+                    .setAction("UNDO", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //adapter = new NoteAdapter(tempData, fragment, dbHandler);
+                            Snackbar sb2 = Snackbar.make(root, "Undo Successful", 4000);
+                            sb2.show();
+                        }
+                    });
+            snackbar.show();
+        }
     }
 
     //sets each not in the database to a card view
@@ -162,19 +183,33 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
 
                         //store previous data incase the user wants to undo their changes.
                         try {
-                            List<Note> newData = dbHandler.getNoteTable().readAll();
+                            tempData = dbHandler.getNoteTable().readAll();
+                            //for (Note n: tempData) {
+                                //dbHandler.getOldNoteTable().delete(n);
+                            //}
+                            //for (Note n: tempData) {
+                                //dbHandler.getOldNoteTable().create(n);
+                            //}
                         } catch (DatabaseException e) {
                             e.printStackTrace();
                         }
 
                         Intent i = new Intent(view.getContext(), NoteActivity.class);
                         i.putExtra("Note", n);
-                        view.getContext().startActivity(i);
 
+                        fragment.startActivityForResult(i, 1);
                         //snackbar
-                        Snackbar snackbar = Snackbar
-                                .make(root, "hello world", Snackbar.LENGTH_LONG);
-                        snackbar.show();
+//                        Snackbar snackbar = Snackbar
+//                                .make(root, "Would you like to undo your changes?", Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("UNDO", new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View view) {
+//                                        //adapter = new NoteAdapter(tempData, fragment, dbHandler);
+//                                        Snackbar sb2 = Snackbar.make(root, "Undo Successful", 4000);
+//                                        sb2.show();
+//                                    }
+//                                });
+//                        snackbar.show();
 
                         break;
                     case R.id.reminder_MenuItem:

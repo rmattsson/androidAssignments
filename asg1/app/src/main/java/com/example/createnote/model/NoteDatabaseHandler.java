@@ -14,6 +14,7 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "note.bd";
     public static final int DATABASE_VERSION = 1;
     private final Table<Note> noteTable;
+    //private final Table<Note> oldNoteTable;
     private final Table<User> userTable;
     private final Table<Collaborator> collaboratorTable;
 
@@ -24,6 +25,10 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
                 .setSeedData(SampleData.getData())
                 .useDateFormat("yyyyMMdd hh:mm:ss")
                 .getTable();
+
+//        oldNoteTable = TableFactory.makeFactory(this, Note.class)
+//                .useDateFormat("yyyyMMdd hh:mm:ss")
+//                .getTable();
 
         userTable = TableFactory.makeFactory(this, User.class)
                 .setSeedData(SampleData.getUsers(context))
@@ -36,6 +41,9 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
     public Table<Note> getNoteTable(){
         return noteTable;
     }
+//    public Table<Note> getOldNoteTable(){
+//        return oldNoteTable;
+//    }
     public Table<User> getUserTable(){
         return userTable;
     }
@@ -50,6 +58,12 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
         {
             noteTable.initialize(db);
         }
+
+//        db.execSQL(oldNoteTable.getCreateTableStatement());
+//        if (oldNoteTable.hasInitialData())
+//        {
+//            oldNoteTable.initialize(db);
+//        }
 
         db.execSQL(userTable.getCreateTableStatement());
         if (userTable.hasInitialData())
@@ -69,6 +83,9 @@ public class NoteDatabaseHandler extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(noteTable.getDropTableStatement());
         db.execSQL(noteTable.getCreateTableStatement());
+
+//        db.execSQL(oldNoteTable.getDropTableStatement());
+//        db.execSQL(oldNoteTable.getCreateTableStatement());
 
         db.execSQL(userTable.getDropTableStatement());
         db.execSQL(userTable.getCreateTableStatement());

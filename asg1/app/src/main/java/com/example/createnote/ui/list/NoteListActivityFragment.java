@@ -33,18 +33,21 @@ import java.util.List;
  */
 public class NoteListActivityFragment extends Fragment {
 
+    public View root;
+
     public NoteListActivityFragment() {
     }
 
     //Data is initiallized be should receive notes from a database later on.
     List<Note> data = new ArrayList<>();
+    List<Note> oldData = new ArrayList<>();
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.fragment_note_list, container, false);
+        root = inflater.inflate(R.layout.fragment_note_list, container, false);
 
         //get the spinner, recycler view and the database handler
         final Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
@@ -55,6 +58,7 @@ public class NoteListActivityFragment extends Fragment {
         try {
             //populate data list with notes from the database
             data = dbHandler.getNoteTable().readAll();
+            //oldData = dbHandler.getOldNoteTable().readAll();
         } catch (DatabaseException e) {
 
             e.printStackTrace();

@@ -2,6 +2,8 @@ package com.example.createnote.ui.editor;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -34,6 +36,7 @@ import java.util.Locale;
 
 import com.example.createnote.model.Note;
 import com.example.createnote.model.Category;
+import com.example.createnote.ui.util.DisplayUsersFragment;
 import com.example.createnote.ui.util.TimePickerDialogFragment;
 
 /**
@@ -41,17 +44,14 @@ import com.example.createnote.ui.util.TimePickerDialogFragment;
  */
 public class NoteActivityFragment extends Fragment {
 
+    //FIELDS
     private ConstraintLayout colour_layout;
     private LinearLayout reminder_layout;
-
     private EditText title;
     private EditText body;
-
     private Switch reminder_switch;
-
     private Button addReminder;
     private ImageButton undoBTN;
-
     private CircleView RED;
     private CircleView ORANGE;
     private CircleView YELLOW;
@@ -60,7 +60,7 @@ public class NoteActivityFragment extends Fragment {
     private CircleView BLUE;
     private CircleView INDIGO;
     private CircleView PURPLE;
-
+    private Note n;
     private Category currentColour = Category.GREEN;
     private boolean hasReminder;
     private Date reminder = null;
@@ -77,18 +77,23 @@ public class NoteActivityFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Note n = getActivity().getIntent().getParcelableExtra("Note");
+        //get note
+        n = getActivity().getIntent().getParcelableExtra("Note");
+
+        //get view
         final View root = inflater.inflate(R.layout.fragment_note, container, false);
 
+        //pass the note id into the DisplayUsersFragment
+        DisplayUsersFragment usersFragment = (DisplayUsersFragment) getChildFragmentManager().findFragmentById(R.id.CollaboratorFragment);
+        usersFragment.setNote(n.getId());
+
+
         history = new ArrayList();
-
-
-
-
 
         //layouts
         colour_layout = root.findViewById(R.id.note_layout);
         reminder_layout = root.findViewById(R.id.reminder_layout);
+
         reminder_layout.setVisibility(View.GONE);
 
         //texts
@@ -112,6 +117,7 @@ public class NoteActivityFragment extends Fragment {
                     }
                 });
 
+        //add listeners to changes to add history
         body = root.findViewById(R.id.body_editText);
         body.addTextChangedListener(new TextWatcher() {
 
@@ -368,6 +374,10 @@ public class NoteActivityFragment extends Fragment {
             return history.get(1);
         }
         return null;
+    }
+
+    public long getNoteid() {
+        return n.getId();
     }
 
     //stores all changes in a list
