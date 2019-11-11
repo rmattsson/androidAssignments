@@ -7,6 +7,9 @@ import android.os.Parcelable;
 import androidx.annotation.RequiresApi;
 
 import com.example.createnote.sqlite.Identifiable;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 
 import java.util.Date;
 
@@ -17,17 +20,25 @@ import java.util.Date;
 public class Note implements Identifiable<Long>, Parcelable {
 
     // basic note elements
+    private String Uuid;
     private long id;
+
+    @Expose
     private String title;
+    @Expose
     private String body;
+    @Expose
     private Category category;
 
     // reminders
     private boolean hasReminder;
+    @Expose
     private Date reminder;
 
     // creation and modification times.
+    @Expose
     private Date created;
+    @Expose
     private Date modified;
 
     /**
@@ -163,6 +174,14 @@ public class Note implements Identifiable<Long>, Parcelable {
         this.modified = modified;
         return this;
     }
+    public String getUuid() {
+        return Uuid;
+    }
+
+    public Note setUuid(String Uuid) {
+        this.Uuid = Uuid;
+        return this;
+    }
 
     /**
      * Create a duplicate (aka clone) of the note.
@@ -235,5 +254,17 @@ public class Note implements Identifiable<Long>, Parcelable {
 
         parcel.writeLong(created.getTime());
         parcel.writeLong(modified.getTime());
+    }
+
+    public String format()
+    {
+    Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
+    return gson.toJson(this);
+    }
+    public static Note parse(String json)
+    {
+        Gson g = new Gson();
+        return g.fromJson(json, Note.class);
     }
 }
