@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
 
+import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.Date;
 
 /**
@@ -18,6 +20,27 @@ import java.util.Date;
  * @author Ian Clement (ian.clement@johnabbott.qc.ca)
  */
 public class Note implements Identifiable<Long>, Parcelable {
+
+    public class Notes {
+        public class Embedded {
+            public Note[] notes;
+        }
+
+        private Embedded _embedded;
+    }
+
+    public class Links {
+        public class Link{
+            public URL href;
+        }
+
+        private Link self;
+        private Link note;
+        private Link collaborators;
+
+    }
+
+    public Links _links;
 
     // basic note elements
     private String Uuid;
@@ -265,6 +288,33 @@ public class Note implements Identifiable<Long>, Parcelable {
     public static Note parse(String json)
     {
         Gson g = new Gson();
-        return g.fromJson(json, Note.class);
+        Note n = g.fromJson(json, Note.class);
+        if (n.reminder != null)
+        {
+            n.hasReminder = true;
+        }
+        String file = n._links.self.href.getFile();
+        String id = file.split("/")[2];
+        n.setUuid(id);
+        return n;
+    }
+    public static Note[] parseArray(String json)
+    {
+        Gson g = new Gson();
+        Notes n = g.fromJson(json, Notes.class);
+        for (Note note: n._embedded.notes) {
+            String file = note._links.self.href.getFile();
+            String id = file.split("/")[2];
+            note.setUuid(id);
+
+            if (note.reminder != null)
+            {
+                note.hasReminder = true;
+            }
+
+
+        }
+
+        return n._embedded.notes;
     }
 }

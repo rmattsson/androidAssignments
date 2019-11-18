@@ -46,7 +46,7 @@ public class NotesServerJsonTest {
     private void assertUsersEqual(User expected, User actual) {
         assertEquals(expected.getUuid(), actual.getUuid());
         assertEquals(expected.getName(), actual.getName());
-        assertEquals(expected.getAvatar(), actual.getAvatar());
+        //assertEquals(expected.getAvatar(), actual.getAvatar());
         assertEquals(expected.getEmail(), actual.getEmail());
     }
 
@@ -486,14 +486,14 @@ public class NotesServerJsonTest {
                 "    }\n" +
                 "  }\n" +
                 "}\n";
-        byte[] bytes = Base64.decode("iVBORw0KGgoAAAANSUhEUgAABBoAAAQaCAYAAADt3BtfAAABEWlDQ1B", Base64.NO_WRAP);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//        byte[] bytes = Base64.decode("iVBORw0KGgoAAAANSUhEUgAABBoAAAQaCAYAAADt3BtfAAABEWlDQ1B", Base64.NO_WRAP);
+//        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
 
         User expected = new User()
                 .setUuid("7bdba0fe-fe95-4b1c-8247-f2479ee6e380")
                 .setName("Ian Clement")
-                .setEmail("ian@foo.com")
-                .setAvatar(bitmap);
+                .setEmail("ian@foo.com");
+               // .setAvatar(bitmap);
 
         User actual = User.parse(json);
 
