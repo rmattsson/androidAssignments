@@ -25,7 +25,13 @@ import com.example.createnote.R;
 import com.example.createnote.model.Category;
 import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
+import com.example.createnote.networking.HttpRequest;
+import com.example.createnote.networking.HttpRequestTask;
+import com.example.createnote.networking.HttpResponse;
+import com.example.createnote.networking.OnErrorListener;
+import com.example.createnote.networking.OnResponseListener;
 import com.example.createnote.sqlite.DatabaseException;
+import com.example.createnote.ui.NotesApplication;
 import com.example.createnote.ui.editor.NoteActivity;
 import com.example.createnote.ui.editor.NoteActivityFragment;
 import com.example.createnote.ui.list.NoteListActivityFragment;
@@ -61,9 +67,10 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
     private NoteAdapter adapter;
     private Note n;
     private List<Note> tempData;
+    private NotesApplication application;
 
     //constructor
-    public NoteViewHolder(@NonNull View root, NoteListActivityFragment fragment , NoteDatabaseHandler dbHandler, NoteAdapter adapter) {
+    public NoteViewHolder(@NonNull View root, NoteListActivityFragment fragment , NoteDatabaseHandler dbHandler, NoteAdapter adapter, NotesApplication application) {
         super(root);
 
         title = root.findViewById(R.id.title_TextView);
@@ -74,6 +81,7 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
         this.fragment = fragment;
         this.dbHandler = dbHandler;
         this.adapter = adapter;
+        this.application = application;
         //this.newData = new ArrayList<>();
 
         //calls on touch when a cardview is touched
@@ -177,22 +185,37 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                 //it keeps track of which action item was pressed
                 String text ="";
 
+
                 switch (menuItem.getItemId())
                 {
                     case R.id.edit_MenuItem:
 
                         //store previous data incase the user wants to undo their changes.
-                        try {
-                            tempData = dbHandler.getNoteTable().readAll();
+                            HttpRequest request = new HttpRequest(application.getURL() + "/user/"+ application.getUserUuid() + "/notes/", HttpRequest.Method.GET);
+                            HttpRequestTask task = new HttpRequestTask();
+                            task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
+                                @Override
+                                public void onResponse(HttpResponse d) {
+                                    Note[] array = Note.parseArray(d.getResponseBody());
+                                    for (Note n:array) {
+                                        tempData.add(n);
+                                    }
+                                }
+                            });
+                            task.setOnErrorListener(new OnErrorListener() {
+                                @Override
+                                public void onError(Exception error) {
+
+                                }
+                            });
+                            task.execute(request);
                             //for (Note n: tempData) {
                                 //dbHandler.getOldNoteTable().delete(n);
                             //}
                             //for (Note n: tempData) {
                                 //dbHandler.getOldNoteTable().create(n);
                             //}
-                        } catch (DatabaseException e) {
-                            e.printStackTrace();
-                        }
+
 
                         Intent i = new Intent(view.getContext(), NoteActivity.class);
                         i.putExtra("Note", n);

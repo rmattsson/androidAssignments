@@ -19,11 +19,18 @@ import com.example.createnote.R;
 import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.SampleData;
+import com.example.createnote.networking.HttpRequest;
+import com.example.createnote.networking.HttpRequestTask;
+import com.example.createnote.networking.HttpResponse;
+import com.example.createnote.networking.OnErrorListener;
+import com.example.createnote.networking.OnResponseListener;
 import com.example.createnote.sqlite.DatabaseException;
+import com.example.createnote.ui.NotesApplication;
 import com.example.createnote.ui.adapter.NoteAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -41,11 +48,14 @@ public class NoteListActivityFragment extends Fragment {
     //Data is initiallized be should receive notes from a database later on.
     List<Note> data = new ArrayList<>();
     List<Note> oldData = new ArrayList<>();
-
+    NotesApplication application;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+
+        application = (NotesApplication) getActivity().getApplication();
 
         root = inflater.inflate(R.layout.fragment_note_list, container, false);
 
@@ -55,17 +65,30 @@ public class NoteListActivityFragment extends Fragment {
 
         NoteDatabaseHandler dbHandler = new NoteDatabaseHandler(getContext());
 
-        try {
-            //populate data list with notes from the database
-            data = dbHandler.getNoteTable().readAll();
-            //oldData = dbHandler.getOldNoteTable().readAll();
-        } catch (DatabaseException e) {
 
-            e.printStackTrace();
-        }
+            //populate data list with notes from the server
+            HttpRequest request = new HttpRequest(application.getURL() + "/user/"+ application.getUserUuid() + "/notes/", HttpRequest.Method.GET);
+        HttpRequestTask task = new HttpRequestTask();
+        task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
+            @Override
+            public void onResponse(HttpResponse d) {
+                Note[] array = Note.parseArray(d.getResponseBody());
+                for (Note n:array) {
+                    data.add(n);
+                }
+            }
+        });
+        task.setOnErrorListener(new OnErrorListener() {
+            @Override
+            public void onError(Exception error) {
+                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+        task.execute(request);
+
 
         //create the adapter
-        final NoteAdapter adapter = new NoteAdapter(data, this, dbHandler);
+        final NoteAdapter adapter = new NoteAdapter(data, this, dbHandler, application);
 
         //sort notes by title as default
         sortNotes(noteRecycler, adapter, 0, data);

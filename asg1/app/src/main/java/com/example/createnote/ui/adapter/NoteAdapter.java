@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.createnote.R;
 import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
+import com.example.createnote.ui.NotesApplication;
 import com.example.createnote.ui.list.NoteListActivity;
 import com.example.createnote.ui.list.NoteListActivityFragment;
 
@@ -22,12 +23,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteViewHolder> {
     private List<Note> data;
     private NoteListActivityFragment fragment;
     private NoteDatabaseHandler dbHandler;
+    private NotesApplication application;
 
     //constructor
-    public NoteAdapter(List<Note> data, NoteListActivityFragment fragment, NoteDatabaseHandler dbHandler){
+    public NoteAdapter(List<Note> data, NoteListActivityFragment fragment, NoteDatabaseHandler dbHandler, NotesApplication application){
         this.data = data;
         this.fragment = fragment;
         this.dbHandler = dbHandler;
+        this.application = application;
     }
 
     @NonNull
@@ -35,7 +38,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteViewHolder> {
     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View root = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.list_item_note, parent, false);
-        NoteViewHolder holder = new NoteViewHolder(root, fragment, dbHandler, this);
+        NoteViewHolder holder = new NoteViewHolder(root, fragment, dbHandler, this, application);
 
         return holder;
     }
