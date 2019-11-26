@@ -14,6 +14,7 @@ import com.google.gson.annotations.Expose;
 import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * Represent a single note in the "Notes" app.
@@ -110,7 +111,7 @@ public class Note implements Identifiable<Long>, Parcelable {
 
 
     protected Note(Parcel in) {
-        id = in.readLong();
+        Uuid = in.readString();
         title = in.readString();
         body = in.readString();
         category = Category.values()[in.readInt() -1];
@@ -258,7 +259,7 @@ public class Note implements Identifiable<Long>, Parcelable {
     //@RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeLong(id);
+        parcel.writeString(Uuid);
         parcel.writeString(title);
         parcel.writeString(body);
         parcel.writeInt(category.getColorId());

@@ -85,7 +85,9 @@ public class NoteActivityFragment extends Fragment {
 
         //pass the note id into the DisplayUsersFragment
         DisplayUsersFragment usersFragment = (DisplayUsersFragment) getChildFragmentManager().findFragmentById(R.id.CollaboratorFragment);
+        usersFragment.setUUID(n.getUuid());
         usersFragment.setNote(n.getId());
+
 
 
         history = new ArrayList();
@@ -390,8 +392,9 @@ public class NoteActivityFragment extends Fragment {
         }
         else
         {
-            note.setCreated(new Date());
+            note.setCreated(n.getCreated());
         }
+        note.setUuid(n.getUuid());
         note.setBody(body.getText().toString());
         note.setTitle(title.getText().toString());
         note.setModified(new Date());

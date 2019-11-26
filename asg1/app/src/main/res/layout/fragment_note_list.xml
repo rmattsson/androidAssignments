@@ -18,10 +18,16 @@
             android:layout_height="wrap_content"
             android:entries="@array/spinnerArray" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/note_RecyclerView"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/Refresher"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/note_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

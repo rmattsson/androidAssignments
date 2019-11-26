@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -49,6 +50,7 @@ public class NoteListActivityFragment extends Fragment {
     List<Note> data = new ArrayList<>();
     List<Note> oldData = new ArrayList<>();
     NotesApplication application;
+    SwipeRefreshLayout swipe;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,29 +64,12 @@ public class NoteListActivityFragment extends Fragment {
         //get the spinner, recycler view and the database handler
         final Spinner noteSpinner = root.findViewById(R.id.note_Spinner);
         final RecyclerView noteRecycler = root.findViewById(R.id.note_RecyclerView);
-
+        swipe = root.findViewById(R.id.Refresher);
         NoteDatabaseHandler dbHandler = new NoteDatabaseHandler(getContext());
 
 
-            //populate data list with notes from the server
-            HttpRequest request = new HttpRequest(application.getURL() + "/user/"+ application.getUserUuid() + "/notes/", HttpRequest.Method.GET);
-        HttpRequestTask task = new HttpRequestTask();
-        task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
-            @Override
-            public void onResponse(HttpResponse d) {
-                Note[] array = Note.parseArray(d.getResponseBody());
-                for (Note n:array) {
-                    data.add(n);
-                }
-            }
-        });
-        task.setOnErrorListener(new OnErrorListener() {
-            @Override
-            public void onError(Exception error) {
-                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
-            }
-        });
-        task.execute(request);
+        //populate data list with notes from the server
+        data = refresh();
 
 
         //create the adapter
@@ -99,6 +84,8 @@ public class NoteListActivityFragment extends Fragment {
         noteSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+
                 sortNotes(noteRecycler, adapter, l, data);
             }
 
@@ -108,6 +95,14 @@ public class NoteListActivityFragment extends Fragment {
             }
         });
 
+        swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //data = refresh();
+                sortNotes(noteRecycler, adapter, 0, data);
+
+            }
+        });
 
 
         return root;
@@ -180,11 +175,38 @@ public class NoteListActivityFragment extends Fragment {
                 }
             });
         }
+        //if refreshing, stop
+        swipe.setRefreshing(false);
 
         //redraw the page
         recycler.setLayoutManager(new GridLayoutManager(getContext(), 2));
         adapter.notifyDataSetChanged();
     }
 
+
+    public List refresh()
+    {
+        data = new ArrayList<>();
+        HttpRequest request = new HttpRequest(application.getURL() + "/user/"+ application.getUserUuid() + "/notes/", HttpRequest.Method.GET);
+        HttpRequestTask task = new HttpRequestTask();
+        task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
+            @Override
+            public void onResponse(HttpResponse d) {
+                Note[] array = Note.parseArray(d.getResponseBody());
+                for (Note n:array) {
+                    data.add(n);
+                }
+            }
+        });
+        task.setOnErrorListener(new OnErrorListener() {
+            @Override
+            public void onError(Exception error) {
+                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+        task.execute(request);
+
+        return data;
+    }
 
 }

@@ -195,11 +195,8 @@ public class NoteViewHolder extends RecyclerView.ViewHolder {
                             HttpRequestTask task = new HttpRequestTask();
                             task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
                                 @Override
-                                public void onResponse(HttpResponse d) {
-                                    Note[] array = Note.parseArray(d.getResponseBody());
-                                    for (Note n:array) {
-                                        tempData.add(n);
-                                    }
+                                public void onResponse(HttpResponse json) {
+                                    n = Note.parse(json.getResponseBody());
                                 }
                             });
                             task.setOnErrorListener(new OnErrorListener() {

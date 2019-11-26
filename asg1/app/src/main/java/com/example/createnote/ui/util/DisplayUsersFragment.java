@@ -17,12 +17,17 @@ import com.example.createnote.model.Collaborator;
 import com.example.createnote.model.Note;
 import com.example.createnote.model.NoteDatabaseHandler;
 import com.example.createnote.model.User;
+import com.example.createnote.networking.HttpRequest;
+import com.example.createnote.networking.HttpRequestTask;
+import com.example.createnote.networking.HttpResponse;
+import com.example.createnote.networking.OnErrorListener;
+import com.example.createnote.networking.OnResponseListener;
 import com.example.createnote.sqlite.DatabaseException;
+import com.example.createnote.ui.NotesApplication;
 
 import java.util.ArrayList;
 import java.util.List;
-
-
+import java.util.UUID;
 
 
 /**
@@ -32,6 +37,7 @@ public class DisplayUsersFragment extends Fragment {
 
 
     private long nid;
+    private String UUID;
 
     /**
      * Listener for the request to add a user event.
@@ -48,6 +54,7 @@ public class DisplayUsersFragment extends Fragment {
     private List<User> users;
     private List<User> collabs;
     private RecyclerView usersRecyclerView;
+    private NotesApplication application;
 
     // listeners
     private OnAddUserRequestedListener onAddUserRequestedListener;
@@ -88,16 +95,29 @@ public class DisplayUsersFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_display_users, container, false);
 
         NoteDatabaseHandler DBhandler = new NoteDatabaseHandler(getContext());
-        users = null;
+        users  = new ArrayList<>();
         collabs = new ArrayList<>();
-        try {
-
-            users = DBhandler.getUserTable().readAll();
 
 
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
+        application = (NotesApplication) getActivity().getApplication();
+        HttpRequest request = new HttpRequest(application.getURL() + "/user/", HttpRequest.Method.GET);
+        HttpRequestTask task = new HttpRequestTask();
+        task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
+            @Override
+            public void onResponse(HttpResponse d) {
+                User[] array = User.parseArray(d.getResponseBody());
+                for (User u:array) {
+                    users.add(u);
+                }
+            }
+        });
+        task.setOnErrorListener(new OnErrorListener() {
+            @Override
+            public void onError(Exception error) {
+                Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+        task.execute(request);
 
 
         // initialize user
@@ -151,24 +171,35 @@ public class DisplayUsersFragment extends Fragment {
         return root;
     }
 
+    public void setUUID(String uuid)
+    {
+        this.UUID = uuid;
+    }
+
     //get the note
     public void setNote(long noteID)
     {
         this.nid=noteID;
 
-        NoteDatabaseHandler DBhandler = new NoteDatabaseHandler(getContext());
 
-        //List<Collaborator> collaborators = null;
-        try {
-            List<Collaborator> collaborators = DBhandler.getcollaboratorTable().readAll();
-            for(Collaborator c: collaborators) {
-                if (c.getNoteId() == nid) {
-                    collabs.add(DBhandler.getUserTable().read(c.getUserId()));
+        HttpRequest request = new HttpRequest(application.getURL() + "/note/" + UUID + "/collaborators/", HttpRequest.Method.GET);
+        HttpRequestTask task = new HttpRequestTask();
+        task.setOnResponseListener(new OnResponseListener<HttpResponse>() {
+            @Override
+            public void onResponse(HttpResponse d) {
+                User[] array = User.parseArray(d.getResponseBody());
+                for (User u:array) {
+                    collabs.add(u);
                 }
             }
-        } catch (DatabaseException e) {
-            e.printStackTrace();
-        }
+        });
+        task.setOnErrorListener(new OnErrorListener() {
+            @Override
+            public void onError(Exception error) {
+                //Toast.makeText(getContext(), error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+        task.execute(request);
 
     }
 
