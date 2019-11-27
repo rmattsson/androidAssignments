@@ -1,27 +1,16 @@
 package com.example.createnote.model;
 
-import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import androidx.annotation.RequiresApi;
-
 import com.example.createnote.sqlite.Identifiable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
-
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.Date;
-import java.util.UUID;
 
-/**
- * Represent a single note in the "Notes" app.
- * @author Ian Clement (ian.clement@johnabbott.qc.ca)
- */
 public class Note implements Identifiable<Long>, Parcelable {
-
+    //inner classes to match the json
     public class Notes {
         public class Embedded {
             public Note[] notes;
@@ -98,6 +87,7 @@ public class Note implements Identifiable<Long>, Parcelable {
      * @param created
      * @param modified
      */
+
     public Note(long id, String title, String body, Category category, boolean hasReminder, Date reminder, Date created, Date modified) {
         this.id = id;
         this.title = title;
@@ -109,7 +99,10 @@ public class Note implements Identifiable<Long>, Parcelable {
         this.modified = modified;
     }
 
-
+    /**
+     * Create a from a parcel
+     * @param in
+     */
     protected Note(Parcel in) {
         Uuid = in.readString();
         title = in.readString();
@@ -136,6 +129,7 @@ public class Note implements Identifiable<Long>, Parcelable {
         }
     };
 
+    //getters and setters
     public String getTitle() {
         return title;
     }
@@ -226,6 +220,8 @@ public class Note implements Identifiable<Long>, Parcelable {
 
     @Override
     public String toString() {
+        //im not sure why this is commented out but
+        // i dont want to mess stuff up by uncommenting it
         /*
         return "Note{" +
                 "id=" + id +
@@ -280,14 +276,15 @@ public class Note implements Identifiable<Long>, Parcelable {
         parcel.writeLong(modified.getTime());
     }
 
-    public String format()
-    {
+    //this will turn the note into JSON format
+    public String format() {
     Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     return gson.toJson(this);
     }
-    public static Note parse(String json)
-    {
+
+    //this method will parse a note from a json string
+    public static Note parse(String json) {
         Gson g = new Gson();
         Note n = g.fromJson(json, Note.class);
         if (n.reminder != null)
@@ -299,8 +296,9 @@ public class Note implements Identifiable<Long>, Parcelable {
         n.setUuid(id);
         return n;
     }
-    public static Note[] parseArray(String json)
-    {
+
+    //this method will parse an array of notes from a json string
+    public static Note[] parseArray(String json) {
         Gson g = new Gson();
         Notes n = g.fromJson(json, Notes.class);
         for (Note note: n._embedded.notes) {

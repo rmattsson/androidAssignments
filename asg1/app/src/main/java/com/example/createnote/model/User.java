@@ -6,14 +6,12 @@ import com.example.createnote.sqlite.Identifiable;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.Expose;
-
-import java.lang.reflect.Type;
 import java.net.URL;
 import java.util.Objects;
 
 
 public class User implements Identifiable<Long> {
-
+//inner classes to match the json
     public class Users {
         public class Embedded {
             public User[] users;
@@ -32,18 +30,7 @@ public class User implements Identifiable<Long> {
         private Link notes;
 
     }
-
-
-
-    public String getUuid() {
-        return Uuid;
-    }
-
-    public User setUuid(String uuid) {
-        Uuid = uuid;
-        return this;
-    }
-
+    //fields
 
     public Links _links;
     private String Uuid;
@@ -53,6 +40,8 @@ public class User implements Identifiable<Long> {
     private transient Bitmap avatar;
     @Expose
     private String email;
+
+    //constructors
 
     public User() {
         this(-1);
@@ -69,6 +58,15 @@ public class User implements Identifiable<Long> {
         this.email = email;
     }
 
+    //getters and setters
+    public String getUuid() {
+        return Uuid;
+    }
+
+    public User setUuid(String uuid) {
+        Uuid = uuid;
+        return this;
+    }
     @Override
     public Long getId() {
         return id;
@@ -132,12 +130,15 @@ public class User implements Identifiable<Long> {
         return Objects.hash(id, name, avatar, email);
     }
 
+    //this will turn the user into JSON format
     public String format()
     {
         Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation()
                 .create();
         return gson.toJson(this);
     }
+
+    //this method will parse a user from a json string
     public static User parse(String json)
     {
         Gson g = new Gson();
@@ -147,6 +148,8 @@ public class User implements Identifiable<Long> {
         u.setUuid(id);
         return u;
     }
+
+    //this method will parse an array of users from a json string
     public static User[] parseArray(String json)
     {
         Gson g = new Gson();
